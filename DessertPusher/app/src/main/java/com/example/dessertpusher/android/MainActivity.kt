@@ -28,6 +28,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleObserver
 import com.example.dessertpusher.R
 import com.example.dessertpusher.databinding.ActivityMainBinding
+import timber.log.Timber
 
 //import com.example.android.dessertpusher.databinding.ActivityMainBinding
 
@@ -154,6 +155,6 @@ class MainActivity : AppCompatActivity(), LifecycleObserver {
 
     override fun onStart() {
         super.onStart()
-        Log.i("MainActivity", "onStart called")
+        Timber.i("onStart called")
     }
 }
