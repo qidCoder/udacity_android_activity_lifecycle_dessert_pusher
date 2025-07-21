@@ -16,8 +16,10 @@ package com.example.dessertpusher.android
  */
 
 import android.os.Handler
+import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
 import timber.log.Timber
 
@@ -37,7 +39,7 @@ import timber.log.Timber
  *
  */
 // make this class a lifecycle observer and pass in the lifecycle from the Activity
-class DessertTimer(lifecycle: Lifecycle): LifecycleObserver {
+class DessertTimer(lifecycle: Lifecycle): DefaultLifecycleObserver {
 
     // The number of seconds counted since the timer started
     var secondsCount = 0
@@ -54,9 +56,14 @@ class DessertTimer(lifecycle: Lifecycle): LifecycleObserver {
         lifecycle.addObserver(this)
     }
 
+    override fun onStart(owner: LifecycleOwner) {
+        startTimer()
+    }
 
-    // start this method whenever the onStart callback is called in the activity
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    override fun onStop(owner: LifecycleOwner) {
+        stopTimer()
+    }
+
     fun startTimer() {
         // Create the runnable action, which prints out a log and increments the seconds counter
         runnable = Runnable {
@@ -75,7 +82,6 @@ class DessertTimer(lifecycle: Lifecycle): LifecycleObserver {
         // In this case, no looper is defined, and it defaults to the main or UI thread.
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun stopTimer() {
         // Removes all pending posts of runnable from the handler's queue, effectively stopping the
         // timer
