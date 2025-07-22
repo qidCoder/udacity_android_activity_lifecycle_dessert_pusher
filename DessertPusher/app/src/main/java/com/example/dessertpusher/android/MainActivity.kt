@@ -30,7 +30,9 @@ import com.example.dessertpusher.R
 import com.example.dessertpusher.databinding.ActivityMainBinding
 import timber.log.Timber
 
-//import com.example.android.dessertpusher.databinding.ActivityMainBinding
+const val KEY_REVENUE = "key_revenue"
+const val DESSERT_SOLD = "desserts_sold"
+const val TIMER_SECOND_COUNT = "timer_second_count"
 
 class MainActivity : AppCompatActivity(), LifecycleObserver {
 
@@ -79,15 +81,24 @@ class MainActivity : AppCompatActivity(), LifecycleObserver {
             onDessertClicked()
         }
 
+        // initialize desert timer
+        //This needs to be before the savedInstanceState check so that the timer is initialized
+        dessertTimer = DessertTimer(this.lifecycle)
+
+        // check for saved state
+        if(savedInstanceState != null) {
+            // Restore the revenue, desserts sold, and seconds count
+            revenue = savedInstanceState.getInt(KEY_REVENUE)
+            dessertsSold = savedInstanceState.getInt(DESSERT_SOLD)
+            dessertTimer.secondsCount = savedInstanceState.getInt(TIMER_SECOND_COUNT)
+        }
+
         // Set the TextViews to the right values
         binding.revenue = revenue
         binding.amountSold = dessertsSold
 
         // Make sure the correct dessert is showing
         binding.dessertButton.setImageResource(currentDessert.imageId)
-
-        // initialize desert timer
-        dessertTimer = DessertTimer(this.lifecycle)
     }
 
     /**
@@ -185,5 +196,18 @@ class MainActivity : AppCompatActivity(), LifecycleObserver {
     override fun onStop() {
         super.onStop()
         Timber.i("onStop called")
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        // Save the revenue, desserts sold, and seconds count
+        outState.putInt(KEY_REVENUE, revenue)
+        outState.putInt(DESSERT_SOLD, dessertsSold)
+        outState.putInt(TIMER_SECOND_COUNT, dessertTimer.secondsCount)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
     }
 }
